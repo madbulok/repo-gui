@@ -18,7 +18,7 @@ public class HomeWork {
 
         while (true){
             humanTurn();
-            if (checkWinTest(DOT_X)){
+            if (checkWin(DOT_X)){
                 System.out.println("Human winner");
                 break;
             }
@@ -28,7 +28,7 @@ public class HomeWork {
             }
             aiTurn();
             printMap();
-            if (checkWinTest(DOT_O)){
+            if (checkWin(DOT_O)){
                 System.out.println("ИИ победил!");
             }
             if (isMapFull()){
@@ -100,18 +100,6 @@ public class HomeWork {
     }
 
     public static boolean checkWin(char symb) {
-        if (map[0][0] == symb && map[0][1] == symb && map[0][2] == symb) return true;
-        if (map[1][0] == symb && map[1][1] == symb && map[1][2] == symb) return true;
-        if (map[2][0] == symb && map[2][1] == symb && map[2][2] == symb) return true;
-        if (map[0][0] == symb && map[1][0] == symb && map[2][0] == symb) return true;
-        if (map[0][1] == symb && map[1][1] == symb && map[2][1] == symb) return true;
-        if (map[0][2] == symb && map[1][2] == symb && map[2][2] == symb) return true;
-        if (map[2][0] == symb && map[1][1] == symb && map[0][2] == symb) return true;
-        if (map[0][0] == symb && map[1][1] == symb && map[2][2] == symb) return true;
-        return false;
-    }
-
-    public static boolean checkWinTest(char symb) {
         // check rows winner
         for (int row = 0; row < SIZE; row++) {
             boolean isWin = false;
