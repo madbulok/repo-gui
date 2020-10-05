@@ -3,67 +3,166 @@ import java.util.Scanner;
 
 public class HomeWork {
     private static Scanner sc = new Scanner(System.in);
+    private static Random random = new Random();
+    private static char[][] map;
+    private static int SIZE = 3;
+    private static int DOTS_TO_WIN = 3;
+    private static char DOT_EMPTY  = '•';
+    private static char DOT_X  = 'X';
+    private static char DOT_O = 'O';
+
 
     public static void main(String[] args) {
-        int isContinue;
-        do {
-//            startGameMagicNumber();
-            startGameMagicWord();
-            System.out.print("Если хотите сыграть еще раз введите 1");
-            isContinue = sc.nextInt();
-        } while (isContinue == 1);
+        initMap();
+        printMap();
 
-        sc.close();
-
-    }
-//    1. Написать программу, которая загадывает случайное число от 0 до 9, и пользователю дается 3 попытки угадать это число.
-//    При каждой попытке компьютер должен сообщить больше ли указанное пользователем число чем загаданное, или меньше.
-//    После победы или проигрыша выводится запрос – «Повторить игру еще раз? 1 – да / 0 – нет»(1 – повторить, 0 – нет).
-
-    static void startGameMagicNumber(){
-        Random random = new Random();
-
-
-        int magicNumber = random.nextInt(10);
-        int enteredNum;
-        int count = 0;
-        do {
-            System.out.print("Введите число: ");
-            enteredNum = sc.nextInt();
-            if (enteredNum > magicNumber) System.out.println("Загаданное число меньше");
-            if (enteredNum < magicNumber) System.out.println("Загаданное число больше");
-            if (enteredNum == magicNumber) System.out.println("Вы угадали число = " + magicNumber);
-            count++;
-        } while(enteredNum != magicNumber && count < 3);
+        while (true){
+            humanTurn();
+            if (checkWinTest(DOT_X)){
+                System.out.println("Human winner");
+                break;
+            }
+            if (isMapFull()){
+                System.out.println("Map is full!");
+                break;
+            }
+            aiTurn();
+            printMap();
+            if (checkWinTest(DOT_O)){
+                System.out.println("ИИ победил!");
+            }
+            if (isMapFull()){
+                System.out.println("Map is full!");
+                break;
+            }
+        }
+        System.out.println("Игра закончена!");
     }
 
-    // второе задание
-    static void startGameMagicWord(){
-        String[] words = {"apple", "orange", "lemon", "banana", "apricot", "avocado", "broccoli",
-                "carrot", "cherry", "garlic", "grape", "melon", "leak", "kiwi", "mango", "mushroom",
-                "nut", "olive", "pea", "peanut", "pear", "pepper", "pineapple", "pumpkin", "potato"};
-        Random random = new Random();
-        String magicWord = words[random.nextInt(words.length)];
-        String enteredWord;
+    private static boolean isMapFull() {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (map[i][j] == DOT_EMPTY) return false;
+            }
+        }
+        return true;
+    }
+
+    public static void initMap() {
+        map = new char[SIZE][SIZE];
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                map[i][j] = DOT_EMPTY;
+            }
+        }
+    }
+
+    public static void printMap() {
+        for (int i = 0; i <= SIZE; i++) {
+            System.out.print(i + " ");
+        }
+        System.out.println();
+        for (int i = 0; i < SIZE; i++) {
+            System.out.print((i+1) + " ");
+            for (int j = 0; j < SIZE; j++) {
+                System.out.print(map[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    public static  void humanTurn() {
+        int x, y;
         do {
-            System.out.print("Введите слово: ");
-            enteredWord = sc.nextLine();
-            StringBuilder answerShow = new StringBuilder();
-            for(int i = 0; i < magicWord.length();i++){
-                if (i < enteredWord.length()){
-                    if (magicWord.charAt(i) == enteredWord.charAt(i) ){
-                        answerShow.append(magicWord.charAt(i));
-                    } else {
-                        answerShow.append("#");
-                    }
+            System.out.println("Введите координаты Х У: ");
+            x = sc.nextInt() - 1;
+            y = sc.nextInt() - 1;
+        } while (!isCellValid(x,y));
+        map[x][y] = DOT_X;
+    }
+
+    private static boolean isCellValid(int x, int y) {
+        if (x < 0 || x > SIZE || y < 0 || y > SIZE) return  false;
+        if (map[x][y] == DOT_EMPTY) return true;
+        return false;
+    }
+
+    public static void aiTurn() {
+        int x, y;
+        do {
+            x = random.nextInt(SIZE);
+            y = random.nextInt(SIZE);
+
+        } while (!isCellValid(x,y));
+        System.out.println("компьютер ходил в точку " + (x+1) + " " + (y+1));
+        map[x][y] = DOT_O;
+    }
+
+    public static boolean checkWin(char symb) {
+        if (map[0][0] == symb && map[0][1] == symb && map[0][2] == symb) return true;
+        if (map[1][0] == symb && map[1][1] == symb && map[1][2] == symb) return true;
+        if (map[2][0] == symb && map[2][1] == symb && map[2][2] == symb) return true;
+        if (map[0][0] == symb && map[1][0] == symb && map[2][0] == symb) return true;
+        if (map[0][1] == symb && map[1][1] == symb && map[2][1] == symb) return true;
+        if (map[0][2] == symb && map[1][2] == symb && map[2][2] == symb) return true;
+        if (map[2][0] == symb && map[1][1] == symb && map[0][2] == symb) return true;
+        if (map[0][0] == symb && map[1][1] == symb && map[2][2] == symb) return true;
+        return false;
+    }
+
+    public static boolean checkWinTest(char symb) {
+        // check rows winner
+        for (int row = 0; row < SIZE; row++) {
+            boolean isWin = false;
+            for (int column = 0; column < SIZE; column++) {
+                if (map[row][column] == symb){
+                    isWin = true;
+                } else {
+                    isWin = false;
+                    break;
                 }
             }
-            if (enteredWord.equals(magicWord)){
-                System.out.println("Вы угадали слово: " + magicWord);
-            } else {
-                while (answerShow.length() < 15) answerShow.append("#");
-                System.out.println("Неправильно! " + answerShow.toString());
+            if (isWin) return true;
+        }
+
+        // check column winner
+        for (int row = 0; row < SIZE; row++) {
+            boolean isWin = false;
+            for (int column = 0; column < SIZE; column++) {
+                if (map[column][row] == symb){
+                    isWin = true;
+                } else {
+                    isWin = false;
+                    break;
+                }
+
             }
-        } while(!enteredWord.equals(magicWord));
+            if (isWin) return true;
+        }
+
+        // check diagonal winner
+        boolean isWin = false;
+        for (int i = 0; i < SIZE; i++) {
+            if (map[i][i] == symb){
+                isWin = true;
+            } else {
+                isWin = false;
+                break;
+            }
+        }
+
+        if (isWin) return true;
+        for (int j = SIZE-1, i = 0; j >= 0; j--) {
+            if (map[i][j] == symb){
+                isWin = true;
+            } else {
+                isWin = false;
+                break;
+            }
+        }
+        return isWin;
     }
+
 }
+
