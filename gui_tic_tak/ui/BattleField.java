@@ -37,6 +37,7 @@ public class BattleField extends JPanel {
 
     public void startToGame(int gameMode, int fieldSize, int winLength){
         this.fieldSize = fieldSize;
+        logic.setDOTS_TO_WIN(winLength);
         isInit = true;
         repaint();
     }
